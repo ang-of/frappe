@@ -61,7 +61,7 @@ images:
 
 substitutions:
   _AR_LOCATION: europe-west4
-  _AR_REPO: lms
+  _AR_REPO: ang-repo
   _IMAGE_NAME: lms
   _TAG: ${SHORT_SHA}
   _STABLE_TAG: stable
