@@ -34,7 +34,7 @@ steps:
       - -c
       - |
         set -e
-        APPS_JSON='[{"url": "https://github.com/frappe/lms","branch": "${_LMS_BRANCH}"}]'
+        APPS_JSON='[{"url": "${_LMS_REPO}","branch": "${_LMS_BRANCH}"}]'
         echo -n "$$APPS_JSON" | base64 -w 0 > /workspace/apps_json_base64.txt
 
   - id: build-image
@@ -44,6 +44,7 @@ steps:
       - -c
       - |
         set -e
+        export DOCKER_BUILDKIT=1
         APPS_JSON_BASE64=$$(cat /workspace/apps_json_base64.txt)
         IMAGE="${_AR_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/${_IMAGE_NAME}"
         docker build \
@@ -59,13 +60,14 @@ images:
   - ${_AR_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/${_IMAGE_NAME}:${_STABLE_TAG}
 
 substitutions:
-  _AR_LOCATION: europe-west1
+  _AR_LOCATION: europe-west4
   _AR_REPO: lms
   _IMAGE_NAME: lms
   _TAG: ${SHORT_SHA}
   _STABLE_TAG: stable
   _FRAPPE_DOCKER_BRANCH: main
   _FRAPPE_BRANCH: version-16
+  _LMS_REPO: https://github.com/ang-of/frappe
   _LMS_BRANCH: main
 
 options:
