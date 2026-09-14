@@ -1,0 +1,75 @@
+# Builds the LMS image the same way .github/workflows/build.yml does:
+# it uses frappe/frappe_docker's layered Containerfile as build context
+# (this repo has no local Dockerfile), then pushes to Artifact Registry.
+#
+# Prerequisites:
+#   - Enable the APIs:
+#       gcloud services enable cloudbuild.googleapis.com artifactregistry.googleapis.com
+#   - An Artifact Registry Docker repository must already exist:
+#       gcloud artifacts repositories create <_AR_REPO> \
+#         --repository-format=docker --location=<_AR_LOCATION>
+#   - The Cloud Build service account needs the "Artifact Registry Writer" role.
+#
+# _TAG defaults to $SHORT_SHA, which Cloud Build only populates for builds
+# triggered from a connected repo (e.g. a GitHub Cloud Build Trigger on
+# push to main/tags, mirroring .github/workflows/build.yml). For a manual
+# local submit, override it explicitly:
+#   gcloud builds submit --config=cloudbuild.yaml \
+#     --substitutions=_TAG=latest,_AR_LOCATION=europe-west1,_AR_REPO=lms,_IMAGE_NAME=lms
+
+steps:
+  - id: clone-frappe-docker
+    name: gcr.io/cloud-builders/git
+    args:
+      - clone
+      - --depth=1
+      - --branch=${_FRAPPE_DOCKER_BRANCH}
+      - https://github.com/frappe/frappe_docker
+      - frappe_docker
+
+  - id: prepare-apps-json
+    name: bash
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        set -e
+        APPS_JSON='[{"url": "https://github.com/frappe/lms","branch": "${_LMS_BRANCH}"}]'
+        echo -n "$$APPS_JSON" | base64 -w 0 > /workspace/apps_json_base64.txt
+
+  - id: build-image
+    name: gcr.io/cloud-builders/docker
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        set -e
+        APPS_JSON_BASE64=$$(cat /workspace/apps_json_base64.txt)
+        IMAGE="${_AR_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/${_IMAGE_NAME}"
+        docker build \
+          -f frappe_docker/images/layered/Containerfile \
+          -t "$$IMAGE:${_TAG}" \
+          -t "$$IMAGE:${_STABLE_TAG}" \
+          --build-arg FRAPPE_BRANCH=${_FRAPPE_BRANCH} \
+          --build-arg APPS_JSON_BASE64="$$APPS_JSON_BASE64" \
+          frappe_docker
+
+images:
+  - ${_AR_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/${_IMAGE_NAME}:${_TAG}
+  - ${_AR_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/${_IMAGE_NAME}:${_STABLE_TAG}
+
+substitutions:
+  _AR_LOCATION: europe-west1
+  _AR_REPO: lms
+  _IMAGE_NAME: lms
+  _TAG: ${SHORT_SHA}
+  _STABLE_TAG: stable
+  _FRAPPE_DOCKER_BRANCH: main
+  _FRAPPE_BRANCH: version-16
+  _LMS_BRANCH: main
+
+options:
+  machineType: E2_HIGHCPU_8
+  logging: CLOUD_LOGGING_ONLY
+
+timeout: 1800s

@@ -24,7 +24,9 @@ bench set-redis-socketio-host redis://redis:6379
 sed -i '/redis/d' ./Procfile
 sed -i '/watch/d' ./Procfile
 
-bench get-app payments
+# Bind the dev server to all interfaces so it's reachable via the published Docker port
+sed -i 's/bench serve  --port 8000/bench serve --port 8000 --host 0.0.0.0/' ./Procfile
+
 bench get-app lms
 
 bench new-site lms.localhost \
@@ -33,7 +35,6 @@ bench new-site lms.localhost \
 --admin-password admin \
 --no-mariadb-socket
 
-bench --site lms.localhost install-app payments
 bench --site lms.localhost install-app lms
 bench --site lms.localhost set-config developer_mode 1
 bench --site lms.localhost clear-cache
