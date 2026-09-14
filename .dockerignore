@@ -1,0 +1,13 @@
+.git
+.github
+node_modules
+**/node_modules
+.DS_Store
+*.pyc
+__pycache__/
+*.egg-info
+lms/public/dist
+lms/public/frontend
+cypress
+frontend/dist
+frontend/node_modules
