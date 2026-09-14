@@ -59,7 +59,7 @@ substitutions:
   _DEPLOY_REGION: europe-west4
   _AR_HOSTNAME: europe-west4-docker.pkg.dev
   _PLATFORM: managed
-  _TRIGGER_ID: REPLACE_WITH_TRIGGER_ID
+  _TRIGGER_ID: manual
 
 tags:
   - gcp-cloud-build-deploy-cloud-run
