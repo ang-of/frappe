@@ -15,3 +15,5 @@ lms/www/lms.html
 lms/www/_lms.html
 frappe-ui
 frappe-semgrep-rules
+# Local secrets for docker-compose.prod.yml
+docker/.env.prod
