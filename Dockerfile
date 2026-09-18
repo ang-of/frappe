@@ -84,6 +84,7 @@ RUN bench init \
     && cd /home/frappe/frappe-bench \
     && bench get-app payments --branch=${PAYMENTS_BRANCH} ${PAYMENTS_REPO} \
     && bench get-app lms /home/frappe/lms-src \
+    && bench build --production \
     && echo "{}" > sites/common_site_config.json \
     && rm -rf /home/frappe/lms-src \
     && find apps -mindepth 1 -path "*/.git" | xargs rm -fr
