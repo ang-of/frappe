@@ -36,7 +36,7 @@ if [ "$db_exists" = "0" ]; then
         --admin-password "$ADMIN_PASSWORD" \
         --install-app lms \
         --set-default
-else
+elif [ ! -d "sites/$SITE_NAME" ]; then
     echo "Database for ${SITE_NAME} (${DB_NAME}) already exists, reattaching site config..."
     bench new-site "$SITE_NAME" \
         --db-name "$DB_NAME" \
@@ -45,6 +45,12 @@ else
         --db-port "$DB_PORT" \
         --no-setup-db \
         --set-default
+    bench --site "$SITE_NAME" migrate
+else
+    # Site dir and DB both already here (e.g. a container restart that kept
+    # its writable layer instead of a fresh one) — nothing to (re)attach.
+    echo "Site ${SITE_NAME} already set up, skipping reattach..."
+    bench use "$SITE_NAME"
     bench --site "$SITE_NAME" migrate
 fi
 
