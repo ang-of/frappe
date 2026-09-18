@@ -62,6 +62,7 @@ fi
 
 exec /home/frappe/frappe-bench/env/bin/gunicorn \
     --chdir=/home/frappe/frappe-bench/sites \
+    --pythonpath=/home/frappe/frappe-bench \
     --bind="0.0.0.0:${PORT}" \
     --threads="${GUNICORN_THREADS:-4}" \
     --workers="${GUNICORN_WORKERS:-2}" \
@@ -69,4 +70,4 @@ exec /home/frappe/frappe-bench/env/bin/gunicorn \
     --worker-tmp-dir=/dev/shm \
     --timeout="${GUNICORN_TIMEOUT:-120}" \
     --preload \
-    frappe.app:application
+    gunicorn_wsgi:application

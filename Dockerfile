@@ -102,6 +102,7 @@ RUN cp -r sites/assets assets && rm -rf sites/assets
 USER root
 COPY --chown=frappe:frappe docker/cloudrun-entrypoint.sh /usr/local/bin/cloudrun-entrypoint.sh
 RUN chmod 755 /usr/local/bin/cloudrun-entrypoint.sh
+COPY --chown=frappe:frappe docker/gunicorn_wsgi.py /home/frappe/frappe-bench/gunicorn_wsgi.py
 
 USER frappe
 ENV PORT=8080
