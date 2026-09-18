@@ -10,8 +10,9 @@
 #   cp .env.prod.example .env.prod   # fill in real secrets
 #   docker compose -f docker-compose.prod.yml up -d --build
 #
-# Exposes the app on host port 80. Put a reverse proxy (Caddy/nginx) with
-# TLS in front of it for anything beyond a quick test — not included here.
+# Caddy terminates TLS (auto-issues a Let's Encrypt cert for CADDY_DOMAIN)
+# and reverse-proxies to lms:8080. Needs ports 80 and 443 open on the host
+# firewall — 80 is used for the ACME HTTP challenge, not just redirects.
 
 services:
   mariadb:
@@ -51,9 +52,23 @@ services:
       DB_HOST: mariadb
       REDIS_CACHE: redis://redis:6379/0
       REDIS_QUEUE: redis://redis:6379/1
+
+  caddy:
+    image: caddy:2-alpine
+    restart: always
+    env_file: .env.prod
+    depends_on:
+      - lms
     ports:
-      - "80:8080"
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
 
 volumes:
   mariadb-data:
   redis-data:
+  caddy-data:
+  caddy-config:
