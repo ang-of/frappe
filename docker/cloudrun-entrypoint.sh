@@ -21,6 +21,12 @@ PORT="${PORT:-8080}"
 rm -rf sites/assets
 ln -s /home/frappe/frappe-bench/assets sites/assets
 
+# Bench-level config, not site-level, so it doesn't need a site to exist yet.
+# Must run before any `bench migrate`/`new-site` call below — migrate checks
+# Redis reachability using whatever's already in common_site_config.json.
+bench set-config -g redis_cache "$REDIS_CACHE"
+bench set-config -g redis_queue "$REDIS_QUEUE"
+
 db_exists=$(mariadb -h"$DB_HOST" -P"$DB_PORT" -u"$DB_ROOT_USER" -p"$DB_ROOT_PASSWORD" \
     -N -B -e "SELECT COUNT(*) FROM information_schema.schemata WHERE schema_name='${DB_NAME}';")
 
@@ -53,9 +59,6 @@ else
     bench use "$SITE_NAME"
     bench --site "$SITE_NAME" migrate
 fi
-
-bench set-config -g redis_cache "$REDIS_CACHE"
-bench set-config -g redis_queue "$REDIS_QUEUE"
 
 exec /home/frappe/frappe-bench/env/bin/gunicorn \
     --chdir=/home/frappe/frappe-bench/sites \
