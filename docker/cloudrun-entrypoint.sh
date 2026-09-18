@@ -43,14 +43,22 @@ if [ "$db_exists" = "0" ]; then
         --install-app lms \
         --set-default
 elif [ ! -d "sites/$SITE_NAME" ]; then
+    # `bench new-site --no-setup-db` still runs the full install_app("frappe")
+    # flow (fixtures, install_basic_docs, ...) even though the schema is
+    # already there — reinstalling into an already-installed DB corrupts
+    # doctype metadata. Reattaching just needs site_config.json recreated so
+    # bench knows which DB to talk to; the schema/data are already correct.
     echo "Database for ${SITE_NAME} (${DB_NAME}) already exists, reattaching site config..."
-    bench new-site "$SITE_NAME" \
-        --db-name "$DB_NAME" \
-        --db-password "$DB_PASSWORD" \
-        --db-host "$DB_HOST" \
-        --db-port "$DB_PORT" \
-        --no-setup-db \
-        --set-default
+    mkdir -p "sites/$SITE_NAME"
+    cat > "sites/$SITE_NAME/site_config.json" <<-SITECONFIG
+	{
+	  "db_name": "$DB_NAME",
+	  "db_password": "$DB_PASSWORD",
+	  "db_host": "$DB_HOST",
+	  "db_port": $DB_PORT
+	}
+	SITECONFIG
+    bench use "$SITE_NAME"
     bench --site "$SITE_NAME" migrate
 else
     # Site dir and DB both already here (e.g. a container restart that kept
