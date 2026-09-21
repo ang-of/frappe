@@ -49,7 +49,9 @@ elif [ ! -d "sites/$SITE_NAME" ]; then
     # doctype metadata. Reattaching just needs site_config.json recreated so
     # bench knows which DB to talk to; the schema/data are already correct.
     echo "Database for ${SITE_NAME} (${DB_NAME}) already exists, reattaching site config..."
-    mkdir -p "sites/$SITE_NAME"
+    # bench new-site also creates this skeleton (frappe.installer.make_site_dirs) -
+    # recreate it here too, otherwise frappe.logger() crashes on a missing logs/ dir.
+    mkdir -p "sites/$SITE_NAME"/{logs,locks,private/backups,private/files,public/files}
     cat > "sites/$SITE_NAME/site_config.json" <<-SITECONFIG
 	{
 	  "db_name": "$DB_NAME",
@@ -64,6 +66,10 @@ else
     # Site dir and DB both already here (e.g. a container restart that kept
     # its writable layer instead of a fresh one) — nothing to (re)attach.
     echo "Site ${SITE_NAME} already set up, skipping reattach..."
+    # Defensive: a prior crashed attempt can leave the site dir behind without
+    # its full skeleton (see the reattach branch above). mkdir -p is a no-op
+    # once it's actually complete.
+    mkdir -p "sites/$SITE_NAME"/{logs,locks,private/backups,private/files,public/files}
     bench use "$SITE_NAME"
     bench --site "$SITE_NAME" migrate
 fi
