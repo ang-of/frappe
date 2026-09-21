@@ -7,8 +7,16 @@
 #
 # Usage:
 #   cd docker
-#   cp .env.prod.example .env.prod   # fill in real secrets
-#   docker compose -f docker-compose.prod.yml up -d --build
+#   cp .env.prod.example .env.prod   # fill in real secrets, including LMS_IMAGE
+#
+#   Option A — build locally on this host:
+#     docker compose --env-file .env.prod -f docker-compose.prod.yml up -d --build
+#
+#   Option B — build elsewhere (Cloud Build) and just deploy the image here,
+#   which avoids running the yarn/webpack build on a small VM:
+#     gcloud builds submit --tag "$LMS_IMAGE" ..   # from the repo root, on your machine
+#     docker compose --env-file .env.prod -f docker-compose.prod.yml pull lms
+#     docker compose --env-file .env.prod -f docker-compose.prod.yml up -d
 #
 # Caddy terminates TLS (auto-issues a Let's Encrypt cert for CADDY_DOMAIN)
 # and reverse-proxies to lms:8080. Needs ports 80 and 443 open on the host
@@ -40,6 +48,7 @@ services:
       - redis-data:/data
 
   lms:
+    image: ${LMS_IMAGE:-lms-local}
     build:
       context: ..
       dockerfile: Dockerfile

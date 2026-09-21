@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 # Self-contained production image for this LMS fork, built from local source
 # instead of frappe_docker's Containerfile + a remote git clone (see cloudbuild.yaml
 # for the previous approach). Mirrors .github/workflows/build.yml's app set
@@ -73,7 +74,16 @@ RUN cd /home/frappe/lms-src \
     && git -c user.email=build@local -c user.name=build add -A \
     && git -c user.email=build@local -c user.name=build commit -q -m build
 
-RUN bench init \
+# yarn's default network-timeout (30s) is too tight on a slow/bursty link -
+# bench's internal `yarn install --check-files` calls have no flag to raise
+# it, so set it globally in ~/.yarnrc instead.
+RUN yarn config set network-timeout 600000
+
+# The yarn cache is mounted (not baked into a layer) so a retry after a
+# network blip - see network-timeout above - reuses already-downloaded
+# packages instead of re-fetching everything this single RUN step pulled in.
+RUN --mount=type=cache,target=/home/frappe/.cache/yarn,uid=1000,gid=1000 \
+    bench init \
         --frappe-branch=${FRAPPE_BRANCH} \
         --frappe-path=${FRAPPE_PATH} \
         --no-procfile \
