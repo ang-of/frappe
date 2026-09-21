@@ -12,6 +12,7 @@ def after_install():
 	give_event_permission()
 	ensure_batch_enrollment_index()
 	ensure_enrollment_unique_constraints()
+	enable_polish_language()
 
 
 def ensure_batch_enrollment_index():
@@ -19,6 +20,21 @@ def ensure_batch_enrollment_index():
 	if not frappe.db.table_exists("LMS Batch Enrollment"):
 		return
 	frappe.db.add_index("LMS Batch Enrollment", ["batch", "member"])
+
+
+def enable_polish_language():
+	"""Make sure Polish shows up in the profile language picker, which only lists enabled Language records."""
+	if frappe.db.exists("Language", "pl"):
+		frappe.db.set_value("Language", "pl", "enabled", 1)
+	else:
+		frappe.get_doc(
+			{
+				"doctype": "Language",
+				"language_code": "pl",
+				"language_name": "Polski",
+				"enabled": 1,
+			}
+		).insert(ignore_permissions=True)
 
 
 def after_sync():
