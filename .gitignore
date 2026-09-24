@@ -17,3 +17,5 @@ frappe-ui
 frappe-semgrep-rules
 # Local secrets for docker-compose.prod.yml
 docker/.env.prod
+# Mark Pro is licensed to ANG, not redistributable: keep it out of this public repo
+lms/public/fonts/mark-pro/

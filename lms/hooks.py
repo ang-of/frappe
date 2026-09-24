@@ -8,6 +8,9 @@ app_publisher = "Frappe"
 app_description = "Open Source Learning Management System built with Frappe Framework"
 app_icon_url = "/assets/lms/images/lms-logo.png"
 app_icon_title = "Learning"
+# Logo on /login and in the desk navbar. Navbar Settings > App Logo, when set,
+# still takes precedence.
+app_logo_url = "/assets/lms/images/ang-logo.svg"
 app_icon_route = "/lms"
 app_color = "grey"
 app_email = "jannat@frappe.io"
@@ -26,11 +29,18 @@ def get_lms_path():
 # ------------------
 
 # include js, css files in header of desk.html
-# app_include_css = "/assets/lms/css/lms.css"
+# ANG brand variables (fonts, colours) for the desk.
+app_include_css = ["/assets/lms/css/ang-fonts.css", "/assets/lms/css/ang-theme.css"]
 # app_include_js = "/assets/lms/js/lms.js"
 
 # include js, css files in header of web template
-# web_include_css = "/assets/lms/css/lms.css"
+# ANG brand for /login, sign-up and other Frappe web pages (the /lms SPA is
+# themed from frontend/src/styles/brand.css instead).
+web_include_css = [
+	"/assets/lms/css/ang-fonts.css",
+	"/assets/lms/css/ang-theme.css",
+	"/assets/lms/css/ang-brand.css",
+]
 web_include_js = []
 
 # include custom scss in every website theme (without file extension ".scss")

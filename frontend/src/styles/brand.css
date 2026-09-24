@@ -1,0 +1,234 @@
+/* ANG brand theme (Brandbook "Identyfikacja wizualna", January 2026).
+
+   frappe-ui paints every component from semantic CSS variables
+   (--surface-*, --ink-*, --outline-*, --focus-*), and its Tailwind utilities
+   read them through `color-mix(var(--x, fallback) …)`. Re-pointing those
+   variables here re-themes Button, Switch, Tabs, Progress, Tooltip, Toast,
+   DatePicker and every LMS page at once, with no fork of frappe-ui and no
+   per-component overrides that an upgrade could silently drop.
+
+   Light values are scoped `:root:not([data-theme='dark'])` and dark ones
+   `:root[data-theme='dark']` (both 0,2,0): frappe-ui declares its dark set
+   on a bare `[data-theme="dark"]`, and a plain `:root` override would outrank
+   it by source order and leak the light palette into dark mode.
+
+   Contrast (WCAG 2.1, checked against #FFFFFF, --ang-grey and --ang-mist-light):
+   body ink >= 7:1, secondary ink (--ink-gray-5) >= 4.6:1, white on the plum
+   solid button 13.2:1, white on the pink CTA 4.98:1, pink-dark links 6.1:1.
+   Pink on plum is only 2.6:1, which is why the focus ring sits 2px off the
+   element instead of touching it. */
+
+/* Fonts: one source for the SPA and the Frappe web pages. */
+@import '../../../lms/public/css/ang-fonts.css';
+
+/* Brand palette ---------------------------------------------------------- */
+
+/* Brandbook values, verbatim (Kolorystyka, pp. 14–17). Each colour ships as
+   the book's dark / base / light triple. Theme-independent: the semantic
+   layer below decides where each one lands per theme. */
+:root {
+	/* Primary palette */
+	--ang-plum-dark: #440e35;
+	--ang-plum: #591245; /* Fioletowy, Pantone 512 C */
+	--ang-plum-light: #7b195f;
+	--ang-pink-dark: #ab2148;
+	--ang-pink: #d32858; /* Różowy, Pantone 191 C */
+	--ang-pink-light: #db426d;
+	--ang-grey-dark: #e2e5e9;
+	--ang-grey: #f6f7f8; /* Jasnoszary */
+	--ang-white: #ffffff;
+	--ang-mist-dark: #bfd4d4;
+	--ang-mist: #d7e4e4; /* Mglistoturkusowy */
+	--ang-mist-light: #edf3f3;
+
+	/* Secondary palette: product lines. Graphics and accents only; none of
+	   these carries white text at 4.5:1, so never set body copy on them. */
+	--ang-teal-dark: #03788c;
+	--ang-teal: #049cb5; /* Biznes */
+	--ang-teal-light: #05c2e1;
+	--ang-yellow-dark: #ebc800;
+	--ang-yellow: #ffd900; /* Ubezpieczenia */
+	--ang-yellow-light: #ffe761;
+	--ang-orange-dark: #d65b00;
+	--ang-orange: #f76900; /* Współpraca */
+	--ang-orange-light: #ff8a33;
+	--ang-green-dark: #00947c;
+	--ang-green: #00b094; /* Rekrutacja */
+	--ang-green-light: #00d1b0;
+
+	/* Typography (pp. 19–22): Mark Pro Book + Bold, golden-ratio scale from a
+	   16px base. */
+	--ang-font: 'Mark Pro', 'Poppins', 'Trebuchet MS', sans-serif;
+	--ang-text-body: 1rem; /* 16px / 1em */
+	--ang-text-h2: 1.625rem; /* 26px / 1.618em */
+	--ang-text-h1: 2.625rem; /* 42px / 2.618em */
+
+	/* Shape: the brandbook's tiles, photos and buttons are generously rounded
+	   and its buttons are pills. */
+	--ang-radius-card: 20px;
+	--ang-radius-pill: 999px;
+
+	/* Roles used by the brand rules below. */
+	--ang-cta: var(--ang-pink);
+	--ang-cta-hover: var(--ang-pink-dark);
+	--ang-link: var(--ang-pink-dark);
+	--ang-accent: var(--ang-pink);
+}
+
+/* frappe-ui semantic layer: light --------------------------------------- */
+
+:root:not([data-theme='dark']) {
+	/* Surfaces. The brand's cool greys replace frappe-ui's neutral ones; the
+	   gray-8…10 steps are frappe-ui's "inverse" surface (solid buttons,
+	   switches, tab indicator, progress, selected dates, tooltips, toasts),
+	   so they carry the plum. */
+	--surface-gray-1: var(--ang-grey);
+	--surface-gray-2: #eef0f2;
+	--surface-gray-3: #e8ebee;
+	--surface-gray-4: var(--ang-grey-dark);
+	--surface-gray-5: #c2c8cf;
+	--surface-gray-6: #949aa1;
+	--surface-gray-7: #777d83;
+	--surface-gray-8: var(--ang-plum-dark); /* :active */
+	--surface-gray-9: var(--ang-plum-light); /* :hover, toasts */
+	--surface-gray-10: var(--ang-plum); /* solid / primary */
+	/* Mist is interchangeable with light grey (p. 14); it gives the app
+	   chrome the brand's own ground. */
+	--surface-sidebar: var(--ang-mist-light);
+
+	/* Ink: plum for primary copy (headings and body are plum throughout the
+	   brandbook), then a plum-tinted ramp holding frappe-ui's lightness steps
+	   so the hierarchy is unchanged. --ink-gray-5 is darkened one step from
+	   frappe-ui's (4.2:1) so secondary text passes AA on every brand ground. */
+	--ink-gray-1: #f3eaef;
+	--ink-gray-2: #e9dfe5;
+	--ink-gray-3: #d1c2cb;
+	--ink-gray-4: #a9919f; /* placeholders / disabled only */
+	--ink-gray-5: #7f6575;
+	--ink-gray-6: #6e5263;
+	--ink-gray-7: #66475a;
+	--ink-gray-8: var(--ang-plum);
+	--ink-gray-9: var(--ang-plum-dark);
+
+	/* Outlines. 1–2 are card and divider hairlines; 7–9 are the checkbox
+	   hover / focus borders and follow the plum of the checked state. */
+	--outline-gray-1: var(--ang-grey-dark);
+	--outline-gray-2: #d3d8de;
+	--outline-gray-3: #c2c8cf;
+	--outline-gray-4: #868c92;
+	--outline-gray-5: #6a7076;
+	--outline-gray-6: #4d5359;
+	--outline-gray-7: var(--ang-plum-light);
+	--outline-gray-8: var(--ang-plum);
+	--outline-gray-9: var(--ang-plum-dark);
+	--outline-elevation-1: var(--ang-grey-dark);
+	--outline-elevation-2: var(--ang-grey-dark);
+
+	/* Focus: brand pink, 2px, >= 3:1 on white, grey and mist. */
+	--focus-default: 0 0 0 2px var(--ang-pink);
+	--focus-outline-default: 2px solid var(--ang-pink);
+}
+
+/* frappe-ui semantic layer: dark ---------------------------------------- */
+
+/* The brandbook defines no dark theme. Keep frappe-ui's dark neutrals and
+   swap only the accents: the inverse surface becomes brand mist (dark
+   --ink-base text on it reads 13.7:1; plum would sit at 1.5:1 on the dark
+   ground) and focus uses the light pink (4.3:1 on #171717). */
+:root[data-theme='dark'] {
+	--surface-gray-8: var(--ang-mist-dark);
+	--surface-gray-9: var(--ang-mist-light);
+	--surface-gray-10: var(--ang-mist);
+	--focus-default: 0 0 0 2px var(--ang-pink-light);
+	--focus-outline-default: 2px solid var(--ang-pink-light);
+}
+
+/* Base -------------------------------------------------------------------- */
+
+html {
+	font-family: var(--ang-font);
+}
+
+/* The ring clears the element so it never has to contrast with the plum
+   fill it surrounds (pink on plum is 2.6:1). */
+:focus-visible {
+	outline-offset: 2px;
+}
+
+::selection {
+	background-color: var(--ang-mist);
+	color: var(--ang-plum-dark);
+}
+
+/* Rich lesson content: the brandbook's type scale (16 / 26 / 42) and its
+   colours. `:root .prose` outranks index.css's own `.prose` rule. */
+:root .prose {
+	--tw-prose-headings: var(--ink-gray-9);
+	--tw-prose-links: var(--ang-link);
+	--tw-prose-bullets: var(--ang-accent);
+	--tw-prose-counters: var(--ang-accent);
+}
+:root:not([data-theme='dark']) .prose {
+	--tw-prose-body: var(--ink-gray-8);
+	--tw-prose-bold: var(--ink-gray-9);
+	--tw-prose-quote-borders: var(--ang-mist-dark);
+}
+:root[data-theme='dark'] .prose {
+	--tw-prose-links: var(--ang-pink-light);
+}
+.prose :where(h1):not(:where([class~='not-prose'] *)) {
+	font-size: var(--ang-text-h1);
+	line-height: 1.2;
+	font-weight: 700;
+}
+.prose :where(h2):not(:where([class~='not-prose'] *)) {
+	font-size: var(--ang-text-h2);
+	line-height: 1.3;
+	font-weight: 700;
+}
+
+/* Brand components -------------------------------------------------------- */
+
+/* The one high-emphasis action on a page (enrol, buy, continue): the
+   brandbook's pink pill. Doubled class so it outranks the Button's own
+   bg / radius utilities without !important. Pair it with frappe-ui
+   <Button variant="solid">, which already sets white text. */
+.ang-cta.ang-cta {
+	border-radius: var(--ang-radius-pill);
+	background-color: var(--ang-cta);
+	color: var(--ang-white);
+}
+.ang-cta.ang-cta:hover:not(:disabled) {
+	background-color: var(--ang-cta-hover);
+}
+.ang-cta.ang-cta:active:not(:disabled) {
+	background-color: var(--ang-plum);
+}
+
+/* Pill shape for secondary actions that sit beside an .ang-cta. */
+.ang-pill.ang-pill {
+	border-radius: var(--ang-radius-pill);
+}
+
+/* Course card: one hairline and a large radius instead of stacked 2px
+   borders, with a lift on hover. Reduced motion keeps the shadow, drops the
+   movement. */
+.ang-course-card {
+	border-radius: var(--ang-radius-card);
+	border: 1px solid var(--outline-gray-1);
+	transition:
+		box-shadow 150ms ease,
+		transform 150ms ease;
+}
+.ang-course-card:hover {
+	box-shadow: var(--elevation-md);
+	transform: translateY(-2px);
+}
+@media (prefers-reduced-motion: reduce) {
+	.ang-course-card {
+		transition: box-shadow 150ms ease;
+	}
+	.ang-course-card:hover {
+		transform: none;
+	}
+}

@@ -1,11 +1,11 @@
 <template>
 	<div
 		v-if="course.title"
-		class="flex flex-col h-full rounded-md overflow-auto text-ink-gray-9 bg-surface-elevation-1"
+		class="ang-course-card flex flex-col h-full overflow-hidden text-ink-gray-9 bg-surface-elevation-1"
 		style="min-height: 350px"
 	>
 		<div
-			class="w-[100%] h-[168px] bg-cover bg-center bg-no-repeat border-t border-x rounded-t-md"
+			class="w-[100%] h-[168px] bg-cover bg-center bg-no-repeat"
 			:style="
 				course.image
 					? { backgroundImage: `url('${encodeURI(course.image)}')` }
@@ -35,7 +35,7 @@
 			</div> -->
 			<div
 				v-if="!course.image"
-				class="flex items-center justify-center text-white flex-1 font-extrabold my-auto px-5 text-center leading-6 h-full"
+				class="flex items-center justify-center text-white flex-1 font-bold my-auto px-5 text-center leading-6 h-full"
 				:class="
 					course.title.length > 32
 						? 'text-lg'
@@ -47,7 +47,7 @@
 				{{ course.title }}
 			</div>
 		</div>
-		<div class="flex flex-col flex-auto p-4 border-x-2 border-b-2 rounded-b-md">
+		<div class="flex flex-col flex-auto p-4">
 			<div class="flex items-center justify-between mb-2">
 				<div v-if="course.lessons">
 					<Tooltip :text="__('Lessons')">
@@ -85,7 +85,7 @@
 
 			<div
 				v-if="course.image"
-				class="font-semibold leading-6"
+				class="font-bold leading-6"
 				:class="course.title.length > 32 ? 'text-lg' : 'text-2xl'"
 			>
 				{{ course.title }}
@@ -156,7 +156,9 @@ const props = defineProps({
 
 const gradientColor = computed(() => {
 	let color = props.course.card_gradient?.toLowerCase() || 'blue'
-	return `linear-gradient(to top right, black, var(--${color}-400))`
+	// Anchor the fallback cover in brand plum rather than black; the plum end
+	// keeps the white title at >= 13:1 wherever it lands.
+	return `linear-gradient(to top right, var(--ang-plum-dark), var(--${color}-400))`
 })
 </script>
 <style>

@@ -1,0 +1,88 @@
+/* ANG brand variables for Frappe itself: the desk (/app, hooks.py
+   `app_include_css`) and the web pages (/login, portal, `web_include_css`).
+   Only Frappe's own CSS variables are re-pointed here, so every desk and
+   website component follows without per-component overrides. Web-only
+   component rules (pill buttons, login card, footer) live in ang-brand.css.
+
+   The LMS SPA (/lms) does not load this file; it is themed by
+   frontend/src/styles/brand.css. The palette is repeated because the two are
+   built by different pipelines — keep them in step.
+
+   Frappe v16 espresso scales differ from frappe-ui's: here the surface ramp
+   runs 1–7 and --surface-gray-7 is the darkest (primary fills). Light values
+   are scoped `:root:not([data-theme='dark'])` (0,2,0) so they beat espresso's
+   `:root, [data-theme="light"]` without leaking into the dark theme. */
+
+/* Brandbook palette (pp. 14–17), theme-independent. */
+:root {
+	--ang-plum-dark: #440e35;
+	--ang-plum: #591245;
+	--ang-plum-light: #7b195f;
+	--ang-pink-dark: #ab2148;
+	--ang-pink: #d32858;
+	--ang-grey-dark: #e2e5e9;
+	--ang-grey: #f6f7f8;
+	--ang-mist: #d7e4e4;
+	--ang-mist-light: #edf3f3;
+	--ang-pink-light: #db426d;
+}
+
+:root:not([data-theme='dark']) {
+	/* Frappe website / desk variables */
+	--font-stack: 'Mark Pro', 'Poppins', 'Trebuchet MS', sans-serif;
+	--primary: var(--ang-plum);
+	--primary-color: var(--ang-plum);
+	--btn-primary: var(--ang-plum);
+	--border-primary: var(--ang-plum);
+	--heading-color: var(--ang-plum-dark);
+	--text-color: var(--ang-plum);
+	--text-muted: #66475a;
+	--text-light: #7f6575;
+	--card-bg: #ffffff;
+	--control-bg: var(--ang-grey);
+	--border-color: var(--ang-grey-dark);
+	--dark-border-color: #d3d8de;
+	--border-radius-lg: 20px;
+	--border-radius-xl: 20px;
+
+	/* Espresso semantic tokens (Tailwind-style classes in the templates) */
+	--ink-gray-4: #a9919f;
+	--ink-gray-5: #7f6575;
+	--ink-gray-6: #6e5263;
+	--ink-gray-7: #66475a;
+	--ink-gray-8: var(--ang-plum);
+	--ink-gray-9: var(--ang-plum-dark);
+	--surface-gray-1: var(--ang-grey);
+	--surface-gray-2: #eef0f2;
+	--surface-gray-3: #e8ebee;
+	--surface-gray-4: var(--ang-grey-dark);
+	--surface-gray-7: var(--ang-plum);
+	--outline-gray-1: var(--ang-grey-dark);
+	--outline-gray-2: #d3d8de;
+
+	/* Desk sidebar */
+	--sidebar-hover-color: #eef0f2;
+	--sidebar-border-color: var(--ang-grey-dark);
+	--divider-color: var(--ang-grey-dark);
+}
+
+/* No brand dark theme exists: keep Frappe's dark neutrals, swap the accent. */
+:root[data-theme='dark'] {
+	--primary: var(--ang-pink-light);
+	--primary-color: var(--ang-pink-light);
+	--font-stack: 'Mark Pro', 'Poppins', 'Trebuchet MS', sans-serif;
+}
+
+body {
+	font-family: var(--font-stack);
+}
+
+/* Form controls keep Frappe's own focus shadow; everything else gets the
+   brand ring, offset so it never has to contrast with a plum fill. */
+:focus-visible:not(input):not(textarea):not(select):not([contenteditable]) {
+	outline: 2px solid var(--ang-pink);
+	outline-offset: 2px;
+}
+[data-theme='dark'] :focus-visible:not(input):not(textarea):not(select):not([contenteditable]) {
+	outline-color: var(--ang-pink-light);
+}

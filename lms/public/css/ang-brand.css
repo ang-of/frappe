@@ -1,0 +1,123 @@
+/* ANG brand components for Frappe web pages: /login, /update-password, the
+   LMS /new-sign-up page, certificates and portal pages rendered through
+   templates/web.html. Loaded after ang-theme.css (hooks.py
+   `web_include_css`), whose variables these rules use. Not loaded in the
+   desk: pill buttons and pink links would be too loud across /app. */
+
+a:not(.btn):not(.nav-link):not(.navbar-brand):not(.dropdown-item) {
+	color: var(--ang-pink-dark);
+}
+
+/* Buttons: the brandbook's pill. */
+.btn {
+	border-radius: 999px;
+}
+.btn-primary,
+.btn-primary:not(:disabled):not(.disabled):active {
+	background-color: var(--ang-plum);
+	border-color: var(--ang-plum);
+	color: #ffffff;
+}
+.btn-primary:hover,
+.btn-primary:focus {
+	background-color: var(--ang-plum-light);
+	border-color: var(--ang-plum-light);
+	color: #ffffff;
+}
+
+/* Inputs: brand grey fill, pink focus. */
+.form-control {
+	background-color: var(--ang-grey);
+	border-radius: 10px;
+}
+.form-control:focus {
+	background-color: #ffffff;
+	border-color: var(--ang-plum);
+	box-shadow: 0 0 0 2px var(--ang-pink);
+}
+
+/* Navbar */
+.navbar {
+	background-color: #ffffff;
+	border-bottom: 1px solid var(--ang-grey-dark);
+}
+.navbar .nav-link {
+	color: var(--ang-plum);
+}
+.navbar .nav-link:hover,
+.navbar .nav-item.active .nav-link {
+	color: var(--ang-pink-dark);
+}
+
+/* Footer: plum band as on the brand's website (brandbook p. 24). The scoped
+   variables flip every footer text colour to light-on-plum (>= 11:1). */
+.web-footer {
+	--text-color: #ffffff;
+	--text-muted: var(--ang-mist-light);
+	--heading-color: #ffffff;
+	--border-color: rgba(255, 255, 255, 0.2);
+	background-color: var(--ang-plum);
+	color: #ffffff;
+}
+.web-footer a,
+.web-footer a:not(.btn):not(.nav-link):not(.navbar-brand) {
+	color: var(--ang-mist-light);
+}
+.web-footer a:hover {
+	color: #ffffff;
+}
+
+/* Login, sign-up and password pages: a white card on the brand's mist
+   ground — the brandbook's recommended setting for the logo (p. 11). */
+body[data-path='login'],
+body[data-path='update-password'],
+body[data-path='new-sign-up'] {
+	background-color: var(--ang-mist-light);
+}
+body .for-login .page-card,
+body .for-forgot .page-card,
+body .for-login-with-email-link .page-card,
+body .for-signup .page-card,
+body .for-email-login .page-card,
+body .for-reset-password .page-card {
+	background-color: #ffffff;
+	border: 1px solid var(--ang-grey-dark);
+	border-radius: 20px;
+}
+/* login.bundle.css nests these four classes deep (.for-login .page-card
+   .page-card-actions .btn-login, 0,4,0) and may load after this file, so
+   the button class is repeated to win on specificity, not order. */
+.page-card .page-card-actions .btn-login.btn-login.btn-login,
+.page-card .page-card-actions .btn-ldap-login.btn-ldap-login.btn-ldap-login,
+.page-card .page-card-actions .btn-signup.btn-signup.btn-signup:not(:disabled) {
+	background: var(--ang-plum);
+	border-radius: 999px;
+}
+.page-card .page-card-actions .btn-login.btn-login.btn-login:hover,
+.page-card .page-card-actions .btn-login.btn-login.btn-login:focus,
+.page-card .page-card-actions .btn-login.btn-login.btn-login:active,
+.page-card .page-card-actions .btn-ldap-login.btn-ldap-login.btn-ldap-login:hover,
+.page-card .page-card-actions .btn-ldap-login.btn-ldap-login.btn-ldap-login:focus,
+.page-card .page-card-actions .btn-signup.btn-signup.btn-signup:not(:disabled):hover,
+.page-card .page-card-actions .btn-signup.btn-signup.btn-signup:not(:disabled):focus {
+	background: var(--ang-plum-light);
+}
+.page-card .page-card-actions .btn-login.btn-login.btn-login:disabled {
+	background: var(--ang-plum);
+}
+.page-card .page-card-actions .btn-login-option.btn-login-option.btn-login-option {
+	border-radius: 999px;
+}
+
+/* Full-bleed card on phones, as Frappe does, so drop the frame there. */
+@media (max-width: 575.98px) {
+	body .for-login .page-card,
+	body .for-forgot .page-card,
+	body .for-login-with-email-link .page-card,
+	body .for-signup .page-card,
+	body .for-email-login .page-card,
+	body .for-reset-password .page-card {
+		border: none;
+		border-radius: 0;
+	}
+}

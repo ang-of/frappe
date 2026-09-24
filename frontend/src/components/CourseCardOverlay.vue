@@ -1,5 +1,5 @@
 <template>
-	<div class="border-2 rounded-md min-w-80 max-w-sm">
+	<div class="border border-outline-gray-1 rounded-card overflow-hidden min-w-80 max-w-sm">
 		<VideoPreview
 			:video-link="course.data?.video_link"
 			:fallback-image="course.data?.image"
@@ -24,7 +24,7 @@
 							},
 						}"
 					>
-						<Button variant="solid" size="md" class="w-full">
+						<Button variant="solid" size="md" class="ang-cta w-full">
 							<template #prefix>
 								<span class="lucide-book-text size-4" />
 							</template>
@@ -48,7 +48,7 @@
 					<Button
 						variant="solid"
 						size="md"
-						class="w-full mb-8 text-p-base-medium"
+						class="ang-cta w-full mb-8 text-p-base-medium"
 					>
 						<template #prefix>
 							<span class="lucide-credit-card size-4" />
@@ -70,7 +70,7 @@
 					v-else-if="!isAdmin"
 					@click="enrollStudent()"
 					variant="solid"
-					class="w-full mb-8"
+					class="ang-cta w-full mb-8"
 					size="md"
 				>
 					<template #prefix>
@@ -84,7 +84,7 @@
 					v-if="canGetCertificate"
 					@click="fetchCertificate()"
 					variant="subtle"
-					class="w-full mt-2"
+					class="ang-pill w-full mt-2"
 					size="md"
 				>
 					<template #prefix>
